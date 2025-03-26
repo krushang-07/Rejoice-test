@@ -1,9 +1,13 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import Login from "../pages/Login";
-import Home from "../pages/Home";
-import Signup from "../pages/Signup";
+
 import ProtectedRoute from "./ProtectedRoute";
+import { Suspense, lazy } from "react";
+
+import Loader from "./Loader";
+const Login = lazy(() => import("../pages/Login"));
+const Home = lazy(() => import("../pages/Home"));
+const Signup = lazy(() => import("../pages/Signup"));
 
 const getAccessToken = () => {
   return localStorage.getItem("auth-token");
@@ -16,19 +20,31 @@ const isAuthenticated = () => {
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <Login />
+      </Suspense>
+    ),
     index: true,
   },
   {
     path: "/signup",
-    element: <Signup />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <Signup />
+      </Suspense>
+    ),
   },
   {
     element: <ProtectedRoute isAuthenticated={isAuthenticated()} />,
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Home />
+          </Suspense>
+        ),
       },
     ],
   },

@@ -1,8 +1,9 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { signupUser } from "../store/slices/authSlice";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const Signup = () => {
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -44,24 +46,16 @@ const Signup = () => {
 
     if (validate()) {
       try {
-        const response = await axios.post(
-          "http://localhost:5000/api/users/register",
-          formData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-
-        if (response.data) {
+        const result = await dispatch(signupUser(formData));
+        if (result.payload) {
           navigate("/login");
           toast.success("Signed up successfully");
+        } else {
+          toast.error(result.error);
         }
       } catch (error) {
+        setErrors(error.response?.data?.message);
         console.error("Error:", error);
-        toast.error("Error signing up");
       }
     }
   };

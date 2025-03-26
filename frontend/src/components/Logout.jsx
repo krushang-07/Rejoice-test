@@ -1,22 +1,17 @@
-import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { IoIosLogOut } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../store/slices/authSlice";
 
 const Logout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/users/logout",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      if (response.status === 200) {
+      const response = await dispatch(logoutUser());
+      if (response.payload) {
         localStorage.removeItem("auth-token");
         navigate("/login");
         toast.success("Logged out successfully");
@@ -29,10 +24,12 @@ const Logout = () => {
   return (
     <div>
       <button
-        className="bg-red-500 text-white px-4 py-2 rounded-md"
+        className="bg-gray-500 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-gray-600"
         onClick={handleLogout}
       >
-        Logout
+        <div className="flex items-center gap-2">
+          Sign Out <IoIosLogOut size={20} />
+        </div>
       </button>
     </div>
   );

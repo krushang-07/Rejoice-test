@@ -1,11 +1,13 @@
-import axios from "axios";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { loginUser } from "../store/slices/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [error, setError] = useState({});
   const [formData, setFormData] = useState({
     email: "",
@@ -34,20 +36,12 @@ const Login = () => {
     e.preventDefault();
     if (validate()) {
       try {
-        const response = await axios.post(
-          "http://localhost:5000/api/users/login",
-          formData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-        if (response.data.token) {
-          localStorage.setItem("auth-token", response.data.token);
+        const result = await dispatch(loginUser(formData));
+        if (result.payload) {
           navigate("/");
           toast.success("Logged in successfully");
+        } else {
+          toast.error(result.error || "Error logging in");
         }
       } catch (error) {
         setError(error.response?.data?.message);
