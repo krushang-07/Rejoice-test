@@ -7,6 +7,13 @@
 ├── backend/          # Node.js backend server
 ```
 
+## Login Credentials
+
+```
+                  Email: test@gmail.com
+                  Password: test@123
+```
+
 ## Tech Stack
 
 ### Frontend
