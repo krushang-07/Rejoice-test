@@ -48,7 +48,7 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${backendUrl}/api/users/logout`, {
+      const response = await axios.post(`${backendUrl}/api/users/logout`, {
         withCredentials: true,
       });
       if (response.status === 200) {
