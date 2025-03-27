@@ -44,22 +44,6 @@ export const signupUser = createAsyncThunk(
     }
   }
 );
-export const logoutUser = createAsyncThunk(
-  "auth/logout",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${backendUrl}/api/users/logout`, {
-        withCredentials: true,
-      });
-      if (response.status === 200) {
-        localStorage.removeItem("auth-token");
-        return response.data;
-      }
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
 
 const initialState = {
   user: null,
@@ -100,9 +84,6 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.isAuthenticated = true;
-        state.token = action.payload.token;
-        localStorage.setItem("auth-token", action.payload.token);
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;

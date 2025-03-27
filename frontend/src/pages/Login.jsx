@@ -36,13 +36,9 @@ const Login = () => {
     e.preventDefault();
     if (validate()) {
       try {
-        const result = await dispatch(loginUser(formData));
-        if (result.payload) {
-          navigate("/");
-          toast.success("Logged in successfully");
-        } else {
-          toast.error(result.error || "Error logging in");
-        }
+        await dispatch(loginUser(formData));
+        navigate("/");
+        toast.success("Logged in successfully");
       } catch (error) {
         setError(error.response?.data?.message);
         console.error("Error:", error);

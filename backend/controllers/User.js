@@ -58,26 +58,12 @@ export const login = async (req, res) => {
 
     res.status(200).cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return sendSuccess(res, "Login successful", { token });
   } catch (error) {
-    handleError(res, error);
-  }
-};
-
-export const logout = async (req, res) => {
-  try {
-    res.cookie("token", "", {
-      httpOnly: true,
-      expires: new Date(0),
-      secure: true,
-      sameSite: "none",
-    });
-    return sendSuccess(res, "Logout successful");
-  } catch (error) {
-    console.log(error);
     handleError(res, error);
   }
 };
