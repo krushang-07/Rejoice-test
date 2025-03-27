@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { loginUser } from "../store/slices/authSlice";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -36,11 +37,18 @@ const Login = () => {
     e.preventDefault();
     if (validate()) {
       try {
-        await dispatch(loginUser(formData));
-        navigate("/");
-        toast.success("Logged in successfully");
+        await dispatch(loginUser(formData))
+          .unwrap()
+          .then((res) => {
+            if (res.success) {
+              Cookies.set("token", res.token);  
+              navigate("/");
+              toast.success("Logged in successfully");
+            } else {
+              toast.error(res.message);
+            }
+          });
       } catch (error) {
-        setError(error.response?.data?.message);
         console.error("Error:", error);
         toast.error("Error logging in");
       }

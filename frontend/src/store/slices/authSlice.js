@@ -19,7 +19,13 @@ export const loginUser = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      // Handle cases where error.response might not exist (network errors, etc.)
+      return rejectWithValue({
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred during login",
+      });
     }
   }
 );
@@ -40,7 +46,12 @@ export const signupUser = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue({
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          "An error occurred during signup",
+      });
     }
   }
 );
@@ -84,6 +95,9 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.isAuthenticated = true;
+        state.token = action.payload.token;
+        localStorage.setItem("auth-token", action.payload.token);
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;

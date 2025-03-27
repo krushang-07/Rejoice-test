@@ -9,14 +9,6 @@ const Login = lazy(() => import("../pages/Login"));
 const Home = lazy(() => import("../pages/Home"));
 const Signup = lazy(() => import("../pages/Signup"));
 
-const getAccessToken = () => {
-  return localStorage.getItem("auth-token");
-};
-
-const isAuthenticated = () => {
-  return !!getAccessToken();
-};
-
 const router = createBrowserRouter([
   {
     path: "/login",
@@ -36,7 +28,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    element: <ProtectedRoute isAuthenticated={isAuthenticated()} />,
+    element: <ProtectedRoute />,
     children: [
       {
         path: "/",

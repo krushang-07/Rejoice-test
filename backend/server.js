@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: true,
+    origin: "https://rejoice-test.vercel.app/",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
@@ -23,7 +23,6 @@ app.use(
       "X-Requested-With",
       "Accept",
     ],
-    exposedHeaders: ["Set-Cookie"],
   })
 );
 
