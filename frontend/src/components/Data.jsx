@@ -10,6 +10,8 @@ import ConfirmationBox from "../utils/ConfirmationBox";
 import { useDebounce } from "use-debounce";
 import { FaDatabase } from "react-icons/fa";
 
+const URL = import.meta.env.VITE_URL;
+
 const Data = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +34,7 @@ const Data = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("https://reqres.in/api/users");
+      const response = await axios.get(URL);
       setUsers(response.data.data);
       setLoading(false);
     } catch (err) {
@@ -53,10 +55,7 @@ const Data = () => {
     e.preventDefault();
     try {
       if (editingUser) {
-        await axios.put(
-          `https://reqres.in/api/users/${editingUser.id}`,
-          formData
-        );
+        await axios.put(`${URL}/${editingUser.id}`, formData);
         setUsers(
           users.map((user) =>
             user.id === editingUser.id ? { ...user, ...formData } : user
@@ -64,10 +63,7 @@ const Data = () => {
         );
         toast.success("User updated successfully");
       } else {
-        const response = await axios.post(
-          "https://reqres.in/api/users",
-          formData
-        );
+        const response = await axios.post(URL, formData);
         setUsers([...users, { ...response.data, id: users.length + 1 }]);
         toast.success("User added successfully");
       }
@@ -97,7 +93,7 @@ const Data = () => {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`https://reqres.in/api/users/${userToDelete}`);
+      await axios.delete(`${URL}/${userToDelete}`);
       setUsers(users.filter((user) => user.id !== userToDelete));
       toast.success("User deleted successfully");
       setShowConfirmation(false);
