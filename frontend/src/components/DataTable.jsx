@@ -3,6 +3,10 @@ import { CiEdit } from "react-icons/ci";
 import { AiOutlineDelete } from "react-icons/ai";
 
 const DataTable = ({ users, handleEdit, handleDelete }) => {
+  if (!users || users.length === 0) {
+    return <div className="text-center py-8 text-gray-500">No data found</div>;
+  }
+
   return (
     <div className="overflow-x-auto shadow-md rounded-lg bg-white">
       <table className="min-w-full">

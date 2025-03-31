@@ -7,7 +7,7 @@ import AddData from "./AddData";
 import DataTable from "./DataTable";
 import { IoIosAddCircle } from "react-icons/io";
 import ConfirmationBox from "../utils/ConfirmationBox";
-import { useDebounce } from "use-debounce";
+import useDebounce from "../hooks/useDebounce";
 import { FaDatabase } from "react-icons/fa";
 
 const URL = import.meta.env.VITE_URL;
