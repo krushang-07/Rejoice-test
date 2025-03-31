@@ -55,16 +55,18 @@ const Signup = () => {
     if (validate()) {
       try {
         setIsLoading(true);
-        const result = await dispatch(signupUser(formData));
-        if (result.payload) {
+        const result = await dispatch(signupUser(formData)).unwrap();
+        // console.log(result);
+        if (result.success) {
           navigate("/login");
           toast.success("Signed up successfully");
-        } else {
-          toast.error(result.error);
         }
       } catch (error) {
-        setErrors(error.response?.data?.message);
-        console.error("Error:", error);
+        if (error.error) {
+          toast.error(error.error);
+        } else {
+          toast.error("An error occurred during signup");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -155,7 +157,7 @@ const Signup = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full text-white bg-gray-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full text-white bg-gray-600 hover:bg-primary-700 cursor-pointer focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed "
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center">

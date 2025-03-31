@@ -46,20 +46,20 @@ const Login = () => {
     if (validate()) {
       try {
         setIsLoading(true);
-        await dispatch(loginUser(formData))
-          .unwrap()
-          .then((res) => {
-            if (res.success) {
-              Cookies.set("token", res.token);
-              navigate("/");
-              toast.success("Logged in successfully");
-            } else {
-              toast.error(res.message);
-            }
-          });
+        const response = await dispatch(loginUser(formData)).unwrap();
+        // console.log(response);
+
+        if (response.success) {
+          Cookies.set("token", response.token);
+          navigate("/");
+          toast.success("Logged in successfully");
+        }
       } catch (error) {
-        console.error("Error:", error);
-        toast.error("Error logging in");
+        if (error.error) {
+          toast.error(error.error);
+        } else {
+          toast.error("An error occurred during login");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -126,7 +126,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full text-white bg-gray-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full text-white bg-gray-600 hover:bg-primary-700 cursor-pointer focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center">
