@@ -19,7 +19,6 @@ export const loginUser = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      // Handle cases where error.response might not exist (network errors, etc.)
       return rejectWithValue({
         error:
           error.response?.data?.message ||
@@ -56,10 +55,11 @@ export const signupUser = createAsyncThunk(
   }
 );
 
+const token = localStorage.getItem("token");
 const initialState = {
   user: null,
-  token: localStorage.getItem("auth-token"),
-  isAuthenticated: false,
+  token: token,
+  isAuthenticated: !!token,
   loading: false,
   error: null,
 };
@@ -70,6 +70,12 @@ const authSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
@@ -82,7 +88,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.token = action.payload.token;
-        localStorage.setItem("auth-token", action.payload.token);
+        state.user = action.payload.user;
+        localStorage.setItem("token", action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -97,7 +104,8 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.token = action.payload.token;
-        localStorage.setItem("auth-token", action.payload.token);
+        state.user = action.payload.user;
+        localStorage.setItem("token", action.payload.token);
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
@@ -106,5 +114,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, logout } = authSlice.actions;
 export default authSlice.reducer;

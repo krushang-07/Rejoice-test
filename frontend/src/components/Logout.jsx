@@ -1,15 +1,16 @@
-"use client";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IoIosLogOut } from "react-icons/io";
-import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 const Logout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const handleLogout = () => {
-    localStorage.removeItem("auth-token");
-    Cookies.remove("token");
+    dispatch(logout());
     navigate("/login");
     toast.success("Logged out successfully");
   };
