@@ -22,6 +22,7 @@ const Data = () => {
   const [userToDelete, setUserToDelete] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery] = useDebounce(searchInput, 500);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -54,6 +55,7 @@ const Data = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       if (editingUser) {
         await axios.put(`${URL}/${editingUser.id}`, formData);
         setUsers(
@@ -73,6 +75,8 @@ const Data = () => {
     } catch (err) {
       setError("Error saving user: " + err.message);
       toast.error("Error saving user: " + err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -92,15 +96,19 @@ const Data = () => {
   };
 
   const confirmDelete = async () => {
+    setIsLoading(true);
     try {
       await axios.delete(`${URL}/${userToDelete}`);
       setUsers(users.filter((user) => user.id !== userToDelete));
+
       toast.success("User deleted successfully");
       setShowConfirmation(false);
       setUserToDelete(null);
     } catch (err) {
       setError("Error deleting user: " + err.message);
       toast.error("Error deleting user: " + err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -162,11 +170,16 @@ const Data = () => {
           formData={formData}
           closeModal={closeModal}
           editingUser={editingUser}
+          isLoading={isLoading}
         />
       )}
 
       {showConfirmation && (
-        <ConfirmationBox onConfirm={confirmDelete} onCancel={cancelDelete} />
+        <ConfirmationBox
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+          isLoading={isLoading}
+        />
       )}
 
       <DataTable

@@ -6,6 +6,7 @@ const AddData = ({
   formData,
   closeModal,
   editingUser,
+  isLoading,
 }) => {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -64,9 +65,19 @@ const AddData = ({
             <div className="mt-5 flex justify-end gap-3">
               <button
                 type="submit"
-                className="rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-600"
+                className="rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
               >
-                {editingUser ? "Update" : "Create"}
+                {isLoading ? (
+                  <span className="flex items-center justify-center">
+                    <div className="animate-spin -ml-1 mr-3 h-5 w-5 border-2 border-white rounded-full border-t-transparent"></div>
+                    {editingUser ? "Updating..." : "Adding..."}
+                  </span>
+                ) : editingUser ? (
+                  "Update"
+                ) : (
+                  "Create"
+                )}
               </button>
               <button
                 type="button"
