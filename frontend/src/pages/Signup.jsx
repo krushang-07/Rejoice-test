@@ -14,6 +14,7 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,6 +34,13 @@ const Signup = () => {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
+    } else if (
+      !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(
+        formData.password
+      )
+    ) {
+      newErrors.password =
+        "Password must contain camelcase and unique character";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters long";
     }
@@ -46,6 +54,7 @@ const Signup = () => {
 
     if (validate()) {
       try {
+        setIsLoading(true);
         const result = await dispatch(signupUser(formData));
         if (result.payload) {
           navigate("/login");
@@ -56,6 +65,8 @@ const Signup = () => {
       } catch (error) {
         setErrors(error.response?.data?.message);
         console.error("Error:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -83,7 +94,7 @@ const Signup = () => {
                     htmlFor="name"
                     className="block mb-2 text-sm font-medium text-gray-900"
                   >
-                    Your Name
+                    Your Name <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
@@ -103,7 +114,7 @@ const Signup = () => {
                     htmlFor="email"
                     className="block mb-2 text-sm font-medium text-gray-900 "
                   >
-                    Your email
+                    Your email <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="email"
@@ -123,7 +134,7 @@ const Signup = () => {
                     htmlFor="password"
                     className="block mb-2 text-sm font-medium text-gray-900 "
                   >
-                    Password
+                    Password <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="password"
@@ -143,9 +154,17 @@ const Signup = () => {
 
                 <button
                   type="submit"
+                  disabled={isLoading}
                   className="w-full text-white bg-gray-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Signup
+                  {isLoading ? (
+                    <span className="flex items-center justify-center">
+                      <div className="animate-spin -ml-1 mr-3 h-5 w-5 border-2 border-white rounded-full border-t-transparent"></div>
+                      Signing up...
+                    </span>
+                  ) : (
+                    "Signup"
+                  )}
                 </button>
                 <p className="text-sm font-light text-gray-500 ">
                   Already have an account?{" "}
